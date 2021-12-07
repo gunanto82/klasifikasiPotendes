@@ -1,0 +1,86 @@
+---
+title: "KlasteringDesa"
+author: "gunanto"
+date: "12/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library(factoextra)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+datdesa = read.csv("C:/Users/TOSHIBA/Documents/R/win-library/4.0/shiny/www/data_desa_pakai.csv", header = TRUE)
+datdesa
+```
+```{r}
+summary(datdesa)
+datdesa$jmlDesa=ifelse(is.na(datdesa$jmlDesa), median(datdesa$jmlDesa,na.rm = TRUE),datdesa$jmlDesa)
+datdesa$jmlDesa
+
+summary(datdesa)
+str(datdesa)
+```
+```{r}
+datdesa.numerik <- datdesa[3:9]
+datdesa.numerik
+```
+```{r}
+datdesa.stds <- scale(datdesa.numerik)
+datdesa.stds
+```
+
+```{r}
+fviz_nbclust(datdesa.stds, kmeans, method = "wss")
+```
+
+```{r}
+fviz_nbclust(datdesa.stds, kmeans, method = "silhouette")
+
+
+Clustering = kmeans(datdesa.stds, centers=3, nstart=25)
+Clustering
+
+
+fviz_cluster(Clustering, geom = 'point', data = datdesa.stds) + ggtitle("k=3")
+
+final=data.frame(datdesa, Clustering$cluster)
+View(final)
+```
+
+```{r}
+kelas1 <- dplyr::filter(final, Clustering.cluster==1)
+print(kelas1)
+
+kelas2 <- dplyr::filter(final, Clustering.cluster==2)
+print(kelas2)
+
+kelas3 <- dplyr::filter(final, Clustering.cluster==3)
+print(kelas3)
+```
+
